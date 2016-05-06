@@ -18,6 +18,7 @@ import SignupForm from 'components/signup-form';
 import WpcomLoginForm from 'signup/wpcom-login-form';
 import config from 'config';
 import { createAccount, authorize, goBackToWpAdmin, activateManage } from 'state/jetpack-connect/actions';
+import { isCalypsoStartedConnection } from 'state/jetpack-connect/selectors';
 import JetpackConnectNotices from './jetpack-connect-notices';
 import observe from 'lib/mixins/data-observe';
 import userUtilities from 'lib/user/utils';
@@ -145,16 +146,16 @@ const LoggedInForm = React.createClass( {
 	},
 
 	componentWillReceiveProps( props ) {
-		const { queryObject, authorizeSuccess, isRedirectingToWpAdmin } = props.jetpackConnectAuthorize;
+		const { queryObject, authorizeSuccess, siteReceived, isRedirectingToWpAdmin } = props.jetpackConnectAuthorize;
 		if ( authorizeSuccess &&
 			! isRedirectingToWpAdmin &&
 			! props.calypsoStartedConnection &&
 			queryObject.redirect_after_auth ) {
 			this.props.goBackToWpAdmin( queryObject.redirect_after_auth );
-		} else if ( authorizeSuccess &&
-			! isRedirectingToWpAdmin &&
+		} else if ( siteReceived &&
 			props.calypsoStartedConnection ) {
-			page( this.getRedirectionTarget() );
+			const plansURL = this.getRedirectionTarget();
+			page.redirect( plansURL );
 		}
 	},
 
@@ -325,16 +326,6 @@ const JetpackConnectAuthorizeForm = React.createClass( {
 	displayName: 'JetpackConnectAuthorizeForm',
 	mixins: [ observe( 'userModule' ) ],
 
-	isCalypsoStartedConnection() {
-		const site = this.props.jetpackConnectAuthorize.queryObject.site.replace( /.*?:\/\//g, '' );
-		if ( this.props.jetpackConnectSessions && this.props.jetpackConnectSessions[ site ] ) {
-			const currentTime = ( new Date() ).getTime();
-			return ( currentTime - this.props.jetpackConnectSessions[ site ] < JETPACK_CONNECT_TTL );
-		}
-
-		return false;
-	},
-
 	isSSO() {
 		const site = this.props.jetpackConnectAuthorize.queryObject.site.replace( /.*?:\/\//g, '' );
 		if ( this.props.jetpackSSOSessions && this.props.jetpackSSOSessions[ site ] ) {
@@ -351,18 +342,12 @@ const JetpackConnectAuthorizeForm = React.createClass( {
 		const props = Object.assign( {}, this.props, {
 			user: user
 		} );
+		const calypsoStartedConnection = isCalypsoStartedConnection( this.props.jetpackConnectSessions, this.props.jetpackConnectAuthorize.queryObject.site );
+
 		return (
 			( user )
-				? <LoggedInForm
-					{ ...props }
-					calypsoStartedConnection={ this.isCalypsoStartedConnection() }
-					isSSO={ this.isSSO() }
-					/>
-				: <LoggedOutForm
-					{ ...props }
-					calypsoStartedConnection={ this.isCalypsoStartedConnection() }
-					isSSO={ this.isSSO() }
-					/>
+				? <LoggedInForm { ...props } calypsoStartedConnection={ calypsoStartedConnection } isSSO={ this.isSSO() />
+				: <LoggedOutForm { ...props } calypsoStartedConnection={ calypsoStartedConnection } isSSO={ this.isSSO() />
 		);
 	},
 	render() {
