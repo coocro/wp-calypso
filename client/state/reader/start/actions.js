@@ -41,18 +41,20 @@ export function requestRecommendations() {
 		// Until the endpoint is ready, use a sample response
 			resolve( sampleSuccessResponse );
 		} )
-		.then( ( data ) => {
-			dispatch( receiveRecommendations( data.recommendations ) );
-			dispatch( {
-				type: READER_START_RECOMMENDATIONS_REQUEST_SUCCESS,
-				data
-			} );
-		} )
-		.catch( ( error ) => {
-			dispatch( {
-				type: READER_START_RECOMMENDATIONS_REQUEST_FAILURE,
-				error
-			} );
-		} );
+		.then(
+			( data ) => {
+				dispatch( receiveRecommendations( data.recommendations ) );
+				dispatch( {
+					type: READER_START_RECOMMENDATIONS_REQUEST_SUCCESS,
+					data
+				} );
+			},
+			( error ) => {
+				dispatch( {
+					type: READER_START_RECOMMENDATIONS_REQUEST_FAILURE,
+					error
+				} );
+			}
+		);
 	};
 }
