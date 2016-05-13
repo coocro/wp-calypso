@@ -22,7 +22,6 @@ import JetpackConnectNotices from './jetpack-connect-notices';
 import observe from 'lib/mixins/data-observe';
 import userUtilities from 'lib/user/utils';
 import Card from 'components/card';
-import CompactCard from 'components/card/compact';
 import Gravatar from 'components/gravatar';
 import i18n from 'lib/mixins/i18n';
 import Gridicon from 'components/gridicon';
@@ -32,37 +31,33 @@ import { recordTracksEvent } from 'state/analytics/actions';
 /**
  * Module variables
  */
-const STATS_PAGE = '/stats/insights/';
-const authUrl = '/wp-admin/admin.php?page=jetpack&connect_url_redirect=true&calypso_env=' + process.env.NODE_ENV;
 const JETPACK_CONNECT_TTL = 60 * 60 * 1000; // 1 Hour
-
-/***
- * Renders a header common to both the logged in and logged out forms
- * @param {String} siteUrl A site URL to display in the header
- * @param {Boolean} isConnected Is the connection complete
- * @returns {Object} The JSX for the form's header
- */
-const renderFormHeader = ( siteUrl, isConnected = false ) => {
-	const headerText = ( isConnected )
-		? i18n.translate( 'You are connected!' )
-		: i18n.translate( 'Connect your self-hosted WordPress' );
-	const subHeaderText = ( isConnected )
-		? i18n.translate( 'The power of WordPress.com is yours to command.' )
-		: i18n.translate( 'Jetpack would like to connect to your WordPress.com account' );
-	return(
-		<div>
-			<ConnectHeader headerText={ headerText }
-					subHeaderText={ subHeaderText } />
-			<CompactCard className="jetpack-connect__authorize-form-header">{ siteUrl }</CompactCard>
-		</div>
-	);
-};
 
 const LoggedOutForm = React.createClass( {
 	displayName: 'LoggedOutForm',
 
 	componentDidMount() {
 		this.props.recordTracksEvent( 'calypso_jpc_signup_view' );
+	},
+
+	renderFormHeader( siteUrl, isConnected ) {
+		const headerText = ( isConnected )
+			? i18n.translate( 'You are connected!' )
+			: i18n.translate( 'Create a new account for Jetpack' );
+		const subHeaderText = ( isConnected )
+			? i18n.translate( 'The power of WordPress.com is yours to command.' )
+			: i18n.translate( 'You are moments away from connecting %(site)s', {
+				args: { site: siteUrl }
+			} );
+
+		return(
+			<div>
+				<ConnectHeader
+					showLogo={ false }
+					headerText={ headerText }
+					subHeaderText={ subHeaderText } />
+			</div>
+		);
 	},
 
 	submitForm( form, userData ) {
@@ -116,7 +111,7 @@ const LoggedOutForm = React.createClass( {
 		return (
 			<div>
 				{ this.renderLocaleSuggestions() }
-				{ renderFormHeader( site ) }
+				{ this.renderFormHeader( site ) }
 				<SignupForm
 					getRedirectToAfterLoginUrl={ window.location.href }
 					disabled={ this.isSubmitting() }
@@ -153,6 +148,26 @@ const LoggedInForm = React.createClass( {
 		}
 	},
 
+	renderFormHeader( siteUrl, isConnected ) {
+		const headerText = ( isConnected )
+			? i18n.translate( 'You are connected!' )
+			: i18n.translate( 'Completing connection' );
+		const subHeaderText = ( isConnected )
+			? i18n.translate( 'The power of WordPress.com is yours to command.' )
+			: i18n.translate( 'Jetpack is finishing up the connection process', {
+				args: { site: siteUrl }
+			} );
+
+		return(
+			<div>
+				<ConnectHeader
+					showLogo={ false }
+					headerText={ headerText }
+					subHeaderText={ subHeaderText } />
+			</div>
+		);
+	},
+
 	activateManage() {
 		const { queryObject, activateManageSecret, plansUrl } = this.props.jetpackConnectAuthorize;
 		this.props.activateManage( queryObject.client_id, queryObject.state, activateManageSecret );
@@ -160,7 +175,7 @@ const LoggedInForm = React.createClass( {
 	},
 
 	handleSubmit() {
-		const { queryObject, manageActivated, activateManageSecret, plansUrl, authorizeError, authorizeSuccess } = this.props.jetpackConnectAuthorize;
+		const { authUrl, queryObject, manageActivated, activateManageSecret, plansUrl, authorizeError, authorizeSuccess } = this.props.jetpackConnectAuthorize;
 		if ( activateManageSecret && ! manageActivated ) {
 			this.activateManage();
 		} else if ( authorizeError && authorizeError.message.indexOf( 'verify_secrets_missing' ) >= 0 ) {
@@ -301,7 +316,7 @@ const LoggedInForm = React.createClass( {
 		const { site } = this.props.jetpackConnectAuthorize.queryObject;
 		return (
 			<div className="jetpack-connect-logged-in-form">
-				{ renderFormHeader( site, authorizeSuccess ) }
+				{ this.renderFormHeader( site, authorizeSuccess ) }
 				<Card>
 					<Gravatar user={ this.props.user } size={ 64 } />
 					<p className="jetpack-connect-logged-in-form__user-text">{ this.getUserText() }</p>
