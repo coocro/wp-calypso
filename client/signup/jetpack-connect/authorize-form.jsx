@@ -27,6 +27,7 @@ import i18n from 'lib/mixins/i18n';
 import Gridicon from 'components/gridicon';
 import LocaleSuggestions from 'signup/locale-suggestions';
 import { recordTracksEvent } from 'state/analytics/actions';
+import Spinner from 'components/spinner';
 
 /**
  * Module variables
@@ -235,7 +236,7 @@ const LoggedInForm = React.createClass( {
 		}
 
 		if ( isAuthorizing ) {
-			return this.translate( 'Authorizing' );
+			return this.translate( 'Authorizing your connection' );
 		}
 
 		return this.translate( 'Approve' );
@@ -311,6 +312,20 @@ const LoggedInForm = React.createClass( {
 		);
 	},
 
+	renderStateAction() {
+		const { authorizeSuccess, siteReceived } = this.props.jetpackConnectAuthorize;
+		if ( this.isAuthorizing() || ( authorizeSuccess && ! siteReceived ) ) {
+			return ( <div className="jetpack-connect-logged-in-form__loading">
+				<span>{ this.getButtonText() }</span> <Spinner size={ 20 } duration={ 3000 } />
+			</div> );
+		}
+		return (
+			<button disabled={ this.isAuthorizing() } onClick={ this.handleSubmit } className="button is-primary">
+				{ this.getButtonText() }
+			</button>
+		);
+	},
+
 	render() {
 		const { authorizeSuccess } = this.props.jetpackConnectAuthorize;
 		const { site } = this.props.jetpackConnectAuthorize.queryObject;
@@ -321,9 +336,7 @@ const LoggedInForm = React.createClass( {
 					<Gravatar user={ this.props.user } size={ 64 } />
 					<p className="jetpack-connect-logged-in-form__user-text">{ this.getUserText() }</p>
 					{ this.renderNotices() }
-					<button disabled={ this.isAuthorizing() } onClick={ this.handleSubmit } className="button is-primary">
-						{ this.getButtonText() }
-					</button>
+					{ this.renderStateAction() }
 				</Card>
 				{ this.renderFooterLinks() }
 			</div>
