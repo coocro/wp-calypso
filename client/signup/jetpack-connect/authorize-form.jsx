@@ -22,7 +22,6 @@ import JetpackConnectNotices from './jetpack-connect-notices';
 import observe from 'lib/mixins/data-observe';
 import userUtilities from 'lib/user/utils';
 import Card from 'components/card';
-import CompactCard from 'components/card/compact';
 import Gravatar from 'components/gravatar';
 import i18n from 'lib/mixins/i18n';
 import Gridicon from 'components/gridicon';
@@ -47,15 +46,19 @@ const authUrl = '/wp-admin/admin.php?page=jetpack&connect_url_redirect=true&caly
 const renderFormHeader = ( siteUrl, isConnected = false ) => {
 	const headerText = ( isConnected )
 		? i18n.translate( 'You are connected!' )
-		: i18n.translate( 'Connect your self-hosted WordPress' );
+		: i18n.translate( 'Create a new account for Jetpack' );
 	const subHeaderText = ( isConnected )
 		? i18n.translate( 'The power of WordPress.com is yours to command.' )
-		: i18n.translate( 'Jetpack would like to connect to your WordPress.com account' );
+		: i18n.translate( 'You are moments away from connectin %(site)s', {
+			args: { site: siteUrl }
+		} );
+
 	return(
 		<div>
-			<ConnectHeader headerText={ headerText }
-					subHeaderText={ subHeaderText } />
-			<CompactCard className="jetpack-connect__authorize-form-header">{ siteUrl }</CompactCard>
+			<ConnectHeader
+				showLogo={ false }
+				headerText={ headerText }
+				subHeaderText={ subHeaderText } />
 		</div>
 	);
 };
