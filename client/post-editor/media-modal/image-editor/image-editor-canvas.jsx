@@ -140,10 +140,18 @@ const MediaModalImageEditorCanvas = React.createClass( {
 		context.restore();
 	},
 
+	renderCrop() {
+		if ( ! this.props.src ) {
+			return;
+		}
+
+		return ( <Crop /> );
+	},
+
 	render() {
 		return (
 			<div className="editor-media-modal-image-editor__canvas-container">
-				<Crop />
+				{ this.renderCrop() }
 				<canvas
 					ref="canvas"
 					className="editor-media-modal-image-editor__canvas" />

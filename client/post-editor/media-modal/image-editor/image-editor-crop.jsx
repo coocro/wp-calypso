@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-import Draggable from 'react-draggable';
 import { connect } from 'react-redux';
 import isEqual from 'lodash/isEqual';
 import noop from 'lodash/noop';
@@ -10,6 +9,7 @@ import noop from 'lodash/noop';
 /**
  * Internal dependencies
  */
+import Draggable from 'components/draggable';
 import { getImageEditorCropBounds } from 'state/ui/editor/media/imageEditor/selectors';
 import { imageEditorCrop } from 'state/ui/editor/media/imageEditor/actions';
 
@@ -53,31 +53,31 @@ const MediaModalImageEditorCrop = React.createClass( {
 		}
 	},
 
-	onTopLeftDrag( event, position ) {
+	onTopLeftDrag( x, y ) {
 		this.setState( {
-			top: position.y,
-			left: position.x
+			top: y,
+			left: x
 		} );
 	},
 
-	onTopRightDrag( event, position ) {
+	onTopRightDrag( x, y ) {
 		this.setState( {
-			top: position.y,
-			right: position.x
+			top: y,
+			right: x
 		} );
 	},
 
-	onBottomRightDrag( event, position ) {
+	onBottomRightDrag( x, y ) {
 		this.setState( {
-			bottom: position.y,
-			right: position.x
+			bottom: y,
+			right: x
 		} );
 	},
 
-	onBottomLeftDrag( event, position ) {
+	onBottomLeftDrag( x, y ) {
 		this.setState( {
-			bottom: position.y,
-			left: position.x
+			bottom: y,
+			left: x
 		} );
 	},
 
@@ -110,43 +110,38 @@ const MediaModalImageEditorCrop = React.createClass( {
 				<Draggable
 					onDrag={ this.onTopLeftDrag }
 					onStop={ this.onDragStop }
-					position={ { y: top, x: left } }
-					bounds={ { top: this.props.topBound, left: this.props.leftBound, bottom, right } }>
-					<div
-						ref="topLeft"
-						className="editor-media-modal-image-editor__crop-handle editor-media-modal-image-editor__crop-handle-nwse">
-					</div>
-				</Draggable>
+					x={ left }
+					y={ top }
+					controlled
+					bounds={ { top: this.props.topBound, left: this.props.leftBound, bottom, right } }
+					ref="topLeft"
+					className="editor-media-modal-image-editor__crop-handle editor-media-modal-image-editor__crop-handle-nwse" />
 				<Draggable
 					onDrag={ this.onTopRightDrag }
 					onStop={ this.onDragStop }
-					position={ { y: top, x: right } }
-					bounds={ { top: this.props.topBound, right: this.props.rightBound, bottom, left } }>
-					<div
-						ref="topRight"
-						className="editor-media-modal-image-editor__crop-handle editor-media-modal-image-editor__crop-handle-nesw">
-					</div>
-				</Draggable>
+					y={ top }
+					x={ right }
+					controlled
+					bounds={ { top: this.props.topBound, right: this.props.rightBound, bottom, left } }
+					ref="topRight"
+					className="editor-media-modal-image-editor__crop-handle editor-media-modal-image-editor__crop-handle-nesw" />
 				<Draggable
 					onDrag={ this.onBottomRightDrag }
 					onStop={ this.onDragStop }
-					position={ { y: bottom, x: right } }
-					bounds={ { bottom: this.props.bottomBound, right: this.props.rightBound, top, left } }>
-					<div
-						ref="bottomRight"
-						className="editor-media-modal-image-editor__crop-handle editor-media-modal-image-editor__crop-handle-nwse">
-					</div>
-				</Draggable>
+					y={ bottom }
+					x={ right }
+					controlled
+					bounds={ { bottom: this.props.bottomBound, right: this.props.rightBound, top, left } }
+					ref="bottomRight"
+					className="editor-media-modal-image-editor__crop-handle editor-media-modal-image-editor__crop-handle-nwse" />
 				<Draggable
 					onDrag={ this.onBottomLeftDrag }
 					onStop={ this.onDragStop }
-					position={ { y: bottom, x: left } }
-					bounds={ { bottom: this.props.bottomBound, left: this.props.leftBound, top, right } }>
-					<div
-						ref="bottomLeft"
-						className="editor-media-modal-image-editor__crop-handle editor-media-modal-image-editor__crop-handle-nesw">
-					</div>
-				</Draggable>
+					y={ bottom }
+					x={ left }
+					bounds={ { bottom: this.props.bottomBound, left: this.props.leftBound, top, right } }
+					ref="bottomLeft"
+					className="editor-media-modal-image-editor__crop-handle editor-media-modal-image-editor__crop-handle-nesw" />
 			</div>
 		);
 	}
