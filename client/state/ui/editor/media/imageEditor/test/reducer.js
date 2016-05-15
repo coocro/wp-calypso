@@ -7,20 +7,24 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
+	IMAGE_EDITOR_CROP,
 	IMAGE_EDITOR_ROTATE_COUNTERCLOCKWISE,
 	IMAGE_EDITOR_FLIP,
 	IMAGE_EDITOR_SET_FILE_INFO,
+	IMAGE_EDITOR_SET_CROP_BOUNDS,
 	IMAGE_EDITOR_STATE_RESET
 } from 'state/action-types';
 
-import reducer, { hasChanges, fileInfo, transform } from '../reducer';
+import reducer, { hasChanges, fileInfo, transform, cropBounds, crop } from '../reducer';
 
 describe( 'reducer', () => {
 	it( 'should export expected reducer keys', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [
 			'hasChanges',
 			'fileInfo',
-			'transform'
+			'transform',
+			'cropBounds',
+			'crop'
 		] );
 	} );
 
@@ -47,12 +51,93 @@ describe( 'reducer', () => {
 			expect( state ).to.be.true;
 		} );
 
+		it( 'should change to true on crop', () => {
+			const state = hasChanges( undefined, {
+				type: IMAGE_EDITOR_CROP
+			} );
+
+			expect( state ).to.be.true;
+		} );
+
 		it( 'should change to false on reset', () => {
 			const state = hasChanges( undefined, {
 				type: IMAGE_EDITOR_STATE_RESET
 			} );
 
 			expect( state ).to.be.false;
+		} );
+	} );
+
+	describe( '#cropBounds()', () => {
+		it( 'should return defaults initially', () => {
+			const state = cropBounds( undefined, {} );
+
+			expect( state ).to.eql( {
+				topBound: 0,
+				leftBound: 0,
+				bottomBound: 100,
+				rightBound: 100
+			} );
+		} );
+
+		it( 'should update the bounds', () => {
+			const state = cropBounds( undefined, {
+				type: IMAGE_EDITOR_SET_CROP_BOUNDS,
+				topBound: 100,
+				leftBound: 200,
+				bottomBound: 300,
+				rightBound: 400
+			} );
+
+			expect( state ).to.eql( {
+				topBound: 100,
+				leftBound: 200,
+				bottomBound: 300,
+				rightBound: 400
+			} );
+		} );
+	} );
+
+	describe( '#crop()', () => {
+		it( 'should return the whole image by default', () => {
+			const state = crop( undefined, {} );
+
+			expect( state ).to.eql( {
+				topRatio: 0,
+				leftRatio: 0,
+				widthRatio: 1,
+				heightRatio: 1
+			} );
+		} );
+
+		it( 'should update the crop ratios', () => {
+			const state = crop( undefined, {
+				type: IMAGE_EDITOR_CROP,
+				topRatio: 0.4,
+				leftRatio: 0.5,
+				widthRatio: 0.6,
+				heightRatio: 0.7
+			} );
+
+			expect( state ).to.eql( {
+				topRatio: 0.4,
+				leftRatio: 0.5,
+				widthRatio: 0.6,
+				heightRatio: 0.7
+			} );
+		} );
+
+		it( 'should reset', () => {
+			const state = crop( undefined, {
+				type: IMAGE_EDITOR_STATE_RESET
+			} );
+
+			expect( state ).to.eql( {
+				topRatio: 0,
+				leftRatio: 0,
+				widthRatio: 1,
+				heightRatio: 1
+			} );
 		} );
 	} );
 

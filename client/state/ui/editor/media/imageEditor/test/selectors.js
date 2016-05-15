@@ -9,7 +9,9 @@ import { expect } from 'chai';
 import {
 	getImageEditorTransform,
 	getImageEditorFileInfo,
-	imageEditorHasChanges
+	imageEditorHasChanges,
+	getImageEditorCropBounds,
+	getImageEditorCrop
 } from '../selectors';
 
 describe( 'selectors', () => {
@@ -78,6 +80,62 @@ describe( 'selectors', () => {
 			} );
 
 			expect( hasChanges ).to.be.true;
+		} );
+	} );
+
+	describe( '#getImageEditorCropBounds()', () => {
+		it( 'should return the crop bounds', () => {
+			const bounds = getImageEditorCropBounds( {
+				ui: {
+					editor: {
+						media: {
+							imageEditor: {
+								cropBounds: {
+									topBound: 100,
+									leftBound: 200,
+									bottomBound: 300,
+									rightBound: 400
+								}
+							}
+						}
+					}
+				}
+			} );
+
+			expect( bounds ).to.eql( {
+				topBound: 100,
+				leftBound: 200,
+				bottomBound: 300,
+				rightBound: 400
+			} );
+		} );
+	} );
+
+	describe( '#getImageEditorCrop()', () => {
+		it( 'should return crop ratios', () => {
+			const hasChanges = getImageEditorCrop( {
+				ui: {
+					editor: {
+						media: {
+							imageEditor: {
+								crop: {
+									topRatio: 0.2,
+									leftRatio: 0.3,
+									widthRatio: 0.4,
+									heightRatio: 0.5
+								}
+							}
+						}
+					}
+				}
+			} );
+
+			expect( hasChanges ).to.eql( {
+				topRatio: 0.2,
+				leftRatio: 0.3,
+				widthRatio: 0.4,
+				heightRatio: 0.5
+			} );
 		} );
 	} );
 } );

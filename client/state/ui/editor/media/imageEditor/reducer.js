@@ -69,7 +69,7 @@ export function transform( state = defaultTransform, action ) {
 		case IMAGE_EDITOR_FLIP:
 			return Object.assign( {}, state, { scaleX: -state.scaleX } );
 		case IMAGE_EDITOR_STATE_RESET:
-			return Object.assign( {}, state, { degrees: 0, scaleX: 1, scaleY: 1 } );
+			return Object.assign( {}, defaultTransform );
 	}
 
 	return state;
@@ -98,6 +98,8 @@ export function crop( state = defaultCrop, action ) {
 				widthRatio: action.widthRatio,
 				heightRatio: action.heightRatio
 			} );
+		case IMAGE_EDITOR_STATE_RESET:
+			return Object.assign( {}, defaultCrop );
 	}
 
 	return state;
