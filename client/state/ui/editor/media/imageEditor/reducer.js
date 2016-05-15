@@ -7,8 +7,10 @@ import { combineReducers } from 'redux';
  * Internal dependencies
  */
 import {
+	IMAGE_EDITOR_CROP,
 	IMAGE_EDITOR_ROTATE_COUNTERCLOCKWISE,
 	IMAGE_EDITOR_FLIP,
+	IMAGE_EDITOR_SET_CROP_BOUNDS,
 	IMAGE_EDITOR_SET_FILE_INFO,
 	IMAGE_EDITOR_STATE_RESET
 } from 'state/action-types';
@@ -25,8 +27,23 @@ export const defaultFileInfo = {
 	mimeType: 'image/png'
 };
 
+export const defaultCropBounds = {
+	topBound: 0,
+	leftBound: 0,
+	bottomBound: 100,
+	rightBound: 100
+};
+
+export const defaultCrop = {
+	topRatio: 0,
+	leftRatio: 0,
+	widthRatio: 1,
+	heightRatio: 1
+};
+
 export function hasChanges( state = false, action ) {
 	switch ( action.type ) {
+		case IMAGE_EDITOR_CROP:
 		case IMAGE_EDITOR_ROTATE_COUNTERCLOCKWISE:
 		case IMAGE_EDITOR_FLIP:
 		case IMAGE_EDITOR_STATE_RESET:
@@ -58,8 +75,38 @@ export function transform( state = defaultTransform, action ) {
 	return state;
 }
 
+export function cropBounds( state = defaultCropBounds, action ) {
+	switch ( action.type ) {
+		case IMAGE_EDITOR_SET_CROP_BOUNDS:
+			return Object.assign( {}, state, {
+				topBound: action.topBound,
+				leftBound: action.leftBound,
+				bottomBound: action.bottomBound,
+				rightBound: action.rightBound
+			} );
+	}
+
+	return state;
+}
+
+export function crop( state = defaultCrop, action ) {
+	switch ( action.type ) {
+		case IMAGE_EDITOR_CROP:
+			return Object.assign( {}, state, {
+				topRatio: action.topRatio,
+				leftRatio: action.leftRatio,
+				widthRatio: action.widthRatio,
+				heightRatio: action.heightRatio
+			} );
+	}
+
+	return state;
+}
+
 export default combineReducers( {
 	hasChanges,
 	fileInfo,
-	transform
+	transform,
+	cropBounds,
+	crop
 } );
