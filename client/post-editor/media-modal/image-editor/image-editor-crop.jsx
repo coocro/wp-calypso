@@ -54,33 +54,94 @@ const MediaModalImageEditorCrop = React.createClass( {
 
 	componentWillReceiveProps( newProps ) {
 		if ( ! isEqual( newProps, this.props ) ) {
-			this.setState( this.getDefaultState( newProps ) );
+			this.updateCrop( this.state, newProps );
 		}
 	},
 
+	updateCrop( newValues, props ) {
+		props = props || this.props;
+
+		const aspectRatio = props.aspectRatio;
+
+		if ( aspectRatio === AspectRatios.FREE ) {
+			this.setState( newValues );
+			return;
+		}
+
+		const imageWidth = props.rightBound - props.leftBound,
+			imageHeight = props.bottomBound - props.topBound,
+			newState = Object.assign( {}, this.state, newValues ),
+			newWidth = newState.right - newState.left,
+			newHeight = newState.bottom - newState.top;
+		let ratio,
+			finalWidth = newWidth,
+			finalHeight = newHeight;
+
+		switch ( aspectRatio ) {
+			case ( AspectRatios.ORIGINAL ):
+				ratio = Math.min( newWidth / imageWidth, newHeight / imageHeight );
+				finalWidth = imageWidth * ratio;
+				finalHeight = imageHeight * ratio;
+				break;
+			case ( AspectRatios.ASPECT_1x1 ):
+				finalWidth = Math.min( newWidth, newHeight );
+				finalHeight = finalWidth;
+				break;
+			case ( AspectRatios.ASPECT_16x9 ):
+				ratio = Math.floor( Math.min( newWidth / 16, newHeight / 9 ) );
+				finalWidth = 16 * ratio;
+				finalHeight = 9 * ratio;
+				break;
+			case ( AspectRatios.ASPECT_4X3 ):
+				ratio = Math.floor( Math.min( newWidth / 4, newHeight / 3 ) );
+				finalWidth = 4 * ratio;
+				finalHeight = 3 * ratio;
+				break;
+			case ( AspectRatios.ASPECT_3X2 ):
+				ratio = Math.floor( Math.min( newWidth / 3, newHeight / 2 ) );
+				finalWidth = 3 * ratio;
+				finalHeight = 2 * ratio;
+				break;
+		}
+
+		if ( newValues.hasOwnProperty( 'top' ) ) {
+			newValues.top = this.state.bottom - finalHeight;
+		} else if ( newValues.hasOwnProperty( 'bottom' ) ) {
+			newValues.bottom = this.state.top + finalHeight;
+		}
+
+		if ( newValues.hasOwnProperty( 'left' ) ) {
+			newValues.left = this.state.right - finalWidth;
+		} else if ( newValues.hasOwnProperty( 'right' ) ) {
+			newValues.right = this.state.left + finalWidth;
+		}
+
+		this.setState( newValues );
+	},
+
 	onTopLeftDrag( x, y ) {
-		this.setState( {
+		this.updateCrop( {
 			top: y,
 			left: x
 		} );
 	},
 
 	onTopRightDrag( x, y ) {
-		this.setState( {
+		this.updateCrop( {
 			top: y,
 			right: x
 		} );
 	},
 
 	onBottomRightDrag( x, y ) {
-		this.setState( {
+		this.updateCrop( {
 			bottom: y,
 			right: x
 		} );
 	},
 
 	onBottomLeftDrag( x, y ) {
-		this.setState( {
+		this.updateCrop( {
 			bottom: y,
 			left: x
 		} );
