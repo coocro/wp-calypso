@@ -10,6 +10,7 @@ import {
 	IMAGE_EDITOR_CROP,
 	IMAGE_EDITOR_ROTATE_COUNTERCLOCKWISE,
 	IMAGE_EDITOR_FLIP,
+	IMAGE_EDITOR_SET_ASPECT_RATIO,
 	IMAGE_EDITOR_SET_FILE_INFO,
 	IMAGE_EDITOR_SET_CROP_BOUNDS,
 	IMAGE_EDITOR_STATE_RESET
@@ -19,10 +20,12 @@ import {
 	resetImageEditorState,
 	imageEditorRotateCounterclockwise,
 	imageEditorFlip,
+	setImageEditorAspectRatio,
 	setImageEditorFileInfo,
 	setImageEditorCropBounds,
 	imageEditorCrop
 } from '../actions';
+import { AspectRatios } from '../constants';
 
 describe( 'actions', () => {
 	describe( '#resetImageEditorState()', () => {
@@ -92,6 +95,17 @@ describe( 'actions', () => {
 				leftRatio: 0.3,
 				widthRatio: 0.4,
 				heightRatio: 0.5
+			} );
+		} );
+	} );
+
+	describe( '#setImageEditorAspectRatio()', () => {
+		it( 'should return an action object', () => {
+			const action = setImageEditorAspectRatio( AspectRatios.ORIGINAL );
+
+			expect( action ).to.eql( {
+				type: IMAGE_EDITOR_SET_ASPECT_RATIO,
+				ratio: AspectRatios.ORIGINAL
 			} );
 		} );
 	} );

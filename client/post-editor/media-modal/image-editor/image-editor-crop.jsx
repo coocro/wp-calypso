@@ -10,7 +10,11 @@ import noop from 'lodash/noop';
  * Internal dependencies
  */
 import Draggable from 'components/draggable';
-import { getImageEditorCropBounds } from 'state/ui/editor/media/imageEditor/selectors';
+import {
+	getImageEditorCropBounds,
+	getImageEditorAspectRatio
+} from 'state/ui/editor/media/imageEditor/selectors';
+import { AspectRatios } from 'state/ui/editor/media/imageEditor/constants';
 import { imageEditorCrop } from 'state/ui/editor/media/imageEditor/actions';
 
 const MediaModalImageEditorCrop = React.createClass( {
@@ -21,6 +25,7 @@ const MediaModalImageEditorCrop = React.createClass( {
 		leftBound: React.PropTypes.number,
 		bottomBound: React.PropTypes.number,
 		rightBound: React.PropTypes.number,
+		aspectRatio: React.PropTypes.string,
 		imageEditorCrop: React.PropTypes.func
 	},
 
@@ -148,6 +153,11 @@ const MediaModalImageEditorCrop = React.createClass( {
 } );
 
 export default connect(
-	( state ) => getImageEditorCropBounds( state ),
+	( state ) => {
+		const bounds = getImageEditorCropBounds( state ),
+			aspectRatio = getImageEditorAspectRatio( state );
+
+		return Object.assign( {}, bounds, { aspectRatio } );
+	},
 	{ imageEditorCrop }
 )( MediaModalImageEditorCrop );

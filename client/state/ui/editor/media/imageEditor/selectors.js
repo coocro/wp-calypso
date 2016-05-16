@@ -52,3 +52,14 @@ export function getImageEditorCropBounds( state ) {
 export function getImageEditorCrop( state ) {
 	return state.ui.editor.media.imageEditor.crop;
 }
+
+/**
+ * Returns the crop data for the image editor
+ *
+ * @param  {Object} state Global state tree
+ * @return {Object} one of the AspectRatios as defined in state/ui/editor/media/imageEditor/constants
+ *
+ */
+export function getImageEditorAspectRatio( state ) {
+	return state.ui.editor.media.imageEditor.aspectRatio;
+}

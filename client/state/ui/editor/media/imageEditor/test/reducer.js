@@ -10,12 +10,14 @@ import {
 	IMAGE_EDITOR_CROP,
 	IMAGE_EDITOR_ROTATE_COUNTERCLOCKWISE,
 	IMAGE_EDITOR_FLIP,
+	IMAGE_EDITOR_SET_ASPECT_RATIO,
 	IMAGE_EDITOR_SET_FILE_INFO,
 	IMAGE_EDITOR_SET_CROP_BOUNDS,
 	IMAGE_EDITOR_STATE_RESET
 } from 'state/action-types';
 
-import reducer, { hasChanges, fileInfo, transform, cropBounds, crop } from '../reducer';
+import { AspectRatios } from '../constants';
+import reducer, { hasChanges, fileInfo, transform, cropBounds, crop, aspectRatio } from '../reducer';
 
 describe( 'reducer', () => {
 	it( 'should export expected reducer keys', () => {
@@ -24,7 +26,8 @@ describe( 'reducer', () => {
 			'fileInfo',
 			'transform',
 			'cropBounds',
-			'crop'
+			'crop',
+			'aspectRatio'
 		] );
 	} );
 
@@ -59,12 +62,45 @@ describe( 'reducer', () => {
 			expect( state ).to.be.true;
 		} );
 
+		it( 'should change to true on aspect ratio change', () => {
+			const state = hasChanges( undefined, {
+				type: IMAGE_EDITOR_SET_ASPECT_RATIO
+			} );
+
+			expect( state ).to.be.true;
+		} );
+
 		it( 'should change to false on reset', () => {
 			const state = hasChanges( undefined, {
 				type: IMAGE_EDITOR_STATE_RESET
 			} );
 
 			expect( state ).to.be.false;
+		} );
+	} );
+
+	describe( '#aspectRatio()', () => {
+		it( 'should default to free aspect', () => {
+			const state = aspectRatio( undefined, {} );
+
+			expect( state ).to.eql( AspectRatios.FREE );
+		} );
+
+		it( 'should update the aspect ratio', () => {
+			const state = aspectRatio( undefined, {
+				type: IMAGE_EDITOR_SET_ASPECT_RATIO,
+				ratio: AspectRatios.ORIGINAL
+			} );
+
+			expect( state ).to.eql( AspectRatios.ORIGINAL );
+		} );
+
+		it( 'should reset to free', () => {
+			const state = aspectRatio( undefined, {
+				type: IMAGE_EDITOR_STATE_RESET
+			} );
+
+			expect( state ).to.eql( AspectRatios.FREE );
 		} );
 	} );
 

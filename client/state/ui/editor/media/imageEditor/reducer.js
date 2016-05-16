@@ -10,10 +10,12 @@ import {
 	IMAGE_EDITOR_CROP,
 	IMAGE_EDITOR_ROTATE_COUNTERCLOCKWISE,
 	IMAGE_EDITOR_FLIP,
+	IMAGE_EDITOR_SET_ASPECT_RATIO,
 	IMAGE_EDITOR_SET_CROP_BOUNDS,
 	IMAGE_EDITOR_SET_FILE_INFO,
 	IMAGE_EDITOR_STATE_RESET
 } from 'state/action-types';
+import { AspectRatios } from './constants';
 
 export const defaultTransform = {
 	degrees: 0,
@@ -43,6 +45,7 @@ export const defaultCrop = {
 
 export function hasChanges( state = false, action ) {
 	switch ( action.type ) {
+		case IMAGE_EDITOR_SET_ASPECT_RATIO:
 		case IMAGE_EDITOR_CROP:
 		case IMAGE_EDITOR_ROTATE_COUNTERCLOCKWISE:
 		case IMAGE_EDITOR_FLIP:
@@ -105,10 +108,22 @@ export function crop( state = defaultCrop, action ) {
 	return state;
 }
 
+export function aspectRatio( state = AspectRatios.FREE, action ) {
+	switch ( action.type ) {
+		case IMAGE_EDITOR_SET_ASPECT_RATIO:
+			return action.ratio;
+		case IMAGE_EDITOR_STATE_RESET:
+			return AspectRatios.FREE;
+	}
+
+	return state;
+}
+
 export default combineReducers( {
 	hasChanges,
 	fileInfo,
 	transform,
 	cropBounds,
-	crop
+	crop,
+	aspectRatio
 } );

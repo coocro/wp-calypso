@@ -11,8 +11,10 @@ import {
 	getImageEditorFileInfo,
 	imageEditorHasChanges,
 	getImageEditorCropBounds,
-	getImageEditorCrop
+	getImageEditorCrop,
+	getImageEditorAspectRatio
 } from '../selectors';
+import { AspectRatios } from '../constants';
 
 describe( 'selectors', () => {
 	describe( '#getImageEditorTransform()', () => {
@@ -136,6 +138,24 @@ describe( 'selectors', () => {
 				widthRatio: 0.4,
 				heightRatio: 0.5
 			} );
+		} );
+	} );
+
+	describe( '#getImageEditorAspectRatio()', () => {
+		it( 'should return the aspect ratio', () => {
+			const hasChanges = getImageEditorAspectRatio( {
+				ui: {
+					editor: {
+						media: {
+							imageEditor: {
+								aspectRatio: AspectRatios.FREE
+							}
+						}
+					}
+				}
+			} );
+
+			expect( hasChanges ).to.eql( AspectRatios.FREE );
 		} );
 	} );
 } );
