@@ -54,7 +54,7 @@ const MediaModalImageEditorCrop = React.createClass( {
 
 	componentWillReceiveProps( newProps ) {
 		if ( ! isEqual( newProps, this.props ) ) {
-			this.updateCrop( this.state, newProps );
+			this.updateCrop( this.getDefaultState( newProps ), newProps );
 		}
 	},
 
