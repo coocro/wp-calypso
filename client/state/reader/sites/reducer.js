@@ -4,23 +4,21 @@ import omit from 'lodash/omit';
 import omitBy from 'lodash/omitBy';
 
 import {
-	READER_FEED_REQUEST,
-	READER_FEED_REQUEST_SUCCESS,
-	READER_FEED_REQUEST_FAILURE,
+	READER_SITE_REQUEST,
+	READER_SITE_REQUEST_SUCCESS,
+	READER_SITE_REQUEST_FAILURE,
 	DESERIALIZE,
 	SERIALIZE
 } from 'state/action-types';
 
-import { decodeEntities } from 'lib/formatting';
-
 import { isValidStateWithSchema } from 'state/utils';
-import { itemsSchema } from './schema';
+import { readerSitesSchema } from './schema';
 
 const actionMap = {
 	[ SERIALIZE ]: handleSerialize,
 	[ DESERIALIZE ]: handleDeserialize,
-	[ READER_FEED_REQUEST_SUCCESS ]: handleRequestSuccess,
-	[ READER_FEED_REQUEST_FAILURE ]: handleRequestFailure
+	[ READER_SITE_REQUEST_SUCCESS ]: handleRequestSuccess,
+	[ READER_SITE_REQUEST_FAILURE ]: handleRequestFailure
 };
 
 function defaultHandler( state ) {
@@ -33,7 +31,7 @@ function handleSerialize( state ) {
 }
 
 function handleDeserialize( state ) {
-	if ( isValidStateWithSchema( state, itemsSchema ) ) {
+	if ( isValidStateWithSchema( state, readerSitesSchema ) ) {
 		return state;
 	}
 	return {};
@@ -42,20 +40,18 @@ function handleDeserialize( state ) {
 function handleRequestFailure( state, action ) {
 	// new object proceeds current state to prevent new errors from overwriting existing values
 	return assign( {
-		[ action.payload.feed_ID ]: {
-			feed_ID: action.payload.feed_ID,
+		[ action.payload.ID ]: {
+			ID: action.payload.ID,
 			is_error: true
 		}
 	}, state );
 }
 
 function handleRequestSuccess( state, action ) {
-	const feed = assign( {}, action.payload );
-	if ( feed.name ) {
-		feed.name = decodeEntities( feed.name );
-	}
+	const site = assign( {}, action.payload );
+	// TODO do we need to normalize site entries somehow?
 	return assign( {}, state, {
-		[ action.payload.feed_ID ]: feed
+		[ action.payload.ID ]: site
 	} );
 }
 
@@ -66,14 +62,14 @@ export function items( state = {}, action ) {
 
 export function queuedRequests( state = {}, action ) {
 	switch ( action.type ) {
-		case READER_FEED_REQUEST:
+		case READER_SITE_REQUEST:
 			return assign( {}, state, {
-				[ action.payload.feed_ID ]: true
+				[ action.payload.ID ]: true
 			} );
 			break;
-		case READER_FEED_REQUEST_SUCCESS:
-		case READER_FEED_REQUEST_FAILURE:
-			return omit( state, action.payload.feed_ID );
+		case READER_SITE_REQUEST_SUCCESS:
+		case READER_SITE_REQUEST_FAILURE:
+			return omit( state, action.payload.ID );
 			break;
 	}
 	return state;

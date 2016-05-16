@@ -8,7 +8,12 @@ import sinon from 'sinon';
 /**
  * Internal dependencies
  */
-import { READER_FEED_REQUEST, READER_FEED_REQUEST_SUCCESS, READER_FEED_REQUEST_FAILURE, SERIALIZE, DESERIALIZE } from 'state/action-types';
+import {
+	READER_SITE_REQUEST,
+	READER_SITE_REQUEST_SUCCESS,
+	READER_SITE_REQUEST_FAILURE,
+	SERIALIZE,
+	DESERIALIZE } from 'state/action-types';
 
 import { items, queuedRequests } from '../reducer';
 
@@ -21,49 +26,32 @@ describe( 'reducer', ( ) => {
 		it( 'should update the state when receiving a feed', ( ) => {
 			expect(
 				items( {}, {
-					type: READER_FEED_REQUEST_SUCCESS,
+					type: READER_SITE_REQUEST_SUCCESS,
 					payload: {
-						feed_ID: 1,
-						blog_ID: 2
+						ID: 1,
+						name: 'my site'
 					}
 				} )[ 1 ]
 			).to.deep.equal( {
-				feed_ID: 1,
-				blog_ID: 2
+				ID: 1,
+				name: 'my site'
 			} );
 		} );
 
-		it( 'should decode entities in the name', ( ) => {
-			expect(
-				items( {}, {
-					type: READER_FEED_REQUEST_SUCCESS,
-					payload: {
-						feed_ID: 1,
-						blog_ID: 2,
-						name: 'ben &amp; jerries'
-					}
-				} )[ 1 ]
-			).to.deep.equal( {
-				feed_ID: 1,
-				blog_ID: 2,
-				name: 'ben & jerries'
-			} );
-		} );
-
-		it( 'should serialize feed entries', ( ) => {
+		it( 'should serialize site entries', ( ) => {
 			const unvalidatedObject = deepFreeze( { hi: 'there' } );
 			expect( items( unvalidatedObject, { type: SERIALIZE } ) ).to.deep.equal( unvalidatedObject );
 		} );
 
 		it( 'should not serialize errors', ( ) => {
 			const stateWithErrors = deepFreeze( {
-				12: { feed_ID: 12 },
+				12: { ID: 12, name: 'yes' },
 				666: {
-					feed_ID: 666,
+					ID: 666,
 					is_error: true
 				}
 			} );
-			expect( items( stateWithErrors, { type: SERIALIZE } ) ).to.deep.equal( { 12: { feed_ID: 12 } } );
+			expect( items( stateWithErrors, { type: SERIALIZE } ) ).to.deep.equal( { 12: { ID: 12, name: 'yes' } } );
 		} );
 
 		it( 'should reject deserializing entries it cannot validate', sinon.test( function() {
@@ -75,13 +63,8 @@ describe( 'reducer', ( ) => {
 		it( 'should deserialize good things', ( ) => {
 			const validState = deepFreeze( {
 				1234: {
-					feed_ID: 1234,
-					blog_ID: 4567,
-					name: 'Example Dot Com',
-					URL: 'http://example.com',
-					feed_URL: 'http://example.com/feed',
-					subscribers_count: 10,
-					is_following: false
+					ID: 1234,
+					name: 'Example Dot Com'
 				}
 			} );
 			expect( items( validState, { type: DESERIALIZE } ) ).to.deep.equal( validState );
@@ -89,31 +72,29 @@ describe( 'reducer', ( ) => {
 
 		it( 'should stash an error object in the map if the request fails', ( ) => {
 			expect( items( {}, {
-				type: READER_FEED_REQUEST_FAILURE,
+				type: READER_SITE_REQUEST_FAILURE,
 				error: new Error( 'request failed' ),
-				payload: { feed_ID: 666 }
-			} ) ).to.deep.equal( { 666: { feed_ID: 666, is_error: true } } );
+				payload: { ID: 666 }
+			} ) ).to.deep.equal( { 666: { ID: 666, is_error: true } } );
 		} );
 
 		it( 'should overwrite an existing entry on receiving a new feed', ( ) => {
-			const startingState = deepFreeze( { 666: { feed_ID: 666, blog_ID: 777, name: 'valid' } } );
+			const startingState = deepFreeze( { 666: { ID: 666, name: 'valid' } } );
 			expect( items( startingState, {
-				type: READER_FEED_REQUEST_SUCCESS,
+				type: READER_SITE_REQUEST_SUCCESS,
 				payload: {
-					feed_ID: 666,
-					blog_ID: 888,
-					name: 'new',
-					subscribers_count: 10
+					ID: 666,
+					name: 'new'
 				}
-			} ) ).to.deep.equal( { 666: { feed_ID: 666, blog_ID: 888, name: 'new', subscribers_count: 10 } } );
+			} ) ).to.deep.equal( { 666: { ID: 666, name: 'new' } } );
 		} );
 
 		it( 'should leave an existing entry alone if an error is received', ( ) => {
-			const startingState = deepFreeze( { 666: { feed_ID: 666, blog_ID: 777, name: 'valid' } } );
+			const startingState = deepFreeze( { 666: { ID: 666, name: 'valid' } } );
 			expect( items( startingState, {
-				type: READER_FEED_REQUEST_FAILURE,
+				type: READER_SITE_REQUEST_FAILURE,
 				error: new Error( 'request failed' ),
-				payload: { feed_ID: 666 }
+				payload: { ID: 666 }
 			} ) ).to.deep.equal( startingState );
 		} );
 	} );
@@ -121,8 +102,8 @@ describe( 'reducer', ( ) => {
 	describe( 'isRequestingFeed', ( ) => {
 		it( 'should add to the set of feeds inflight', ( ) => {
 			expect( queuedRequests( {}, {
-				type: READER_FEED_REQUEST,
-				payload: { feed_ID: 1 }
+				type: READER_SITE_REQUEST,
+				payload: { ID: 1 }
 			} ) ).to.deep.equal( { 1: true } );
 		} );
 
@@ -131,8 +112,8 @@ describe( 'reducer', ( ) => {
 				queuedRequests(
 					deepFreeze( { 1: true } ),
 					{
-						type: READER_FEED_REQUEST_SUCCESS,
-						payload: { feed_ID: 1 }
+						type: READER_SITE_REQUEST_SUCCESS,
+						payload: { ID: 1 }
 					}
 				)
 			).to.deep.equal( {} );
