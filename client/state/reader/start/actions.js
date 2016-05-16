@@ -8,7 +8,6 @@ import {
 	READER_START_RECOMMENDATIONS_REQUEST_SUCCESS,
 	READER_START_RECOMMENDATIONS_REQUEST_FAILURE
 } from 'state/action-types';
-import { sampleSuccessResponse } from './sample_responses';
 
 /**
  * Returns an action object to signal that recommendation objects have been received.
@@ -35,11 +34,9 @@ export function requestRecommendations() {
 		} );
 
 		return new Promise( ( resolve, reject ) => {
-		// wpcom.undocumented().readLists( ( error, data ) => {
-		// 	error ? reject( error ) : resolve( data );
-		// } );
-		// Until the endpoint is ready, use a sample response
-			resolve( sampleSuccessResponse );
+			wpcom.undocumented().readRecommendationsStart( ( error, data ) => {
+				error ? reject( error ) : resolve( data );
+			} );
 		} )
 		.then(
 			( data ) => {

@@ -1169,6 +1169,10 @@ Undocumented.prototype.fetchSiteRecommendations = function( query, fn ) {
 	this.wpcom.req.get( '/read/recommendations/mine', query, fn );
 };
 
+Undocumented.prototype.readRecommendationsStart = function( query, fn ) {
+	this.wpcom.req.get( '/read/recommendations/start', query, fn );
+};
+
 Undocumented.prototype.readNewPostEmailSubscription = function( query, fn ) {
 	var params = omit( query, [ 'site' ] );
 	debug( '/read/site/:site/post_email_subscriptions/new' );
