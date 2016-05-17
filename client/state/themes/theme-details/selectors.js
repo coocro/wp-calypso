@@ -5,7 +5,8 @@ export function getThemeDetails( state, id ) {
 	return theme ? formatPrice( theme.toJS() ) : {};
 }
 
-// Convert price to format used by v1.2 themes API
+// Convert price to format used by v1.2 themes API to fit with existing components.
+// TODO (seear): remove when v1.2 theme details endpoint is added
 function formatPrice( theme ) {
 	const price = theme.price;
 	if ( price && price.value && price.currency ) {
