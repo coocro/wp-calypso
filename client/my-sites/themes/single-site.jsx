@@ -96,7 +96,7 @@ const ThemesSingleSite = React.createClass( {
 					: {},
 			};
 
-		return merge( {}, buttonOptions, actionLabels );
+		return merge( {}, buttonOptions, actionLabels() );
 	},
 
 	onPreviewButtonClick( theme ) {

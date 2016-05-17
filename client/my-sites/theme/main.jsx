@@ -266,8 +266,8 @@ const ThemeSheet = React.createClass( {
 				</ActivatingTheme>
 				{ this.state.selectedAction && <ThemesSiteSelectorModal
 					name={ this.state.selectedAction }
-					label={ actionLabels[ this.state.selectedAction ].label }
-					header={ actionLabels[ this.state.selectedAction ].header }
+					label={ actionLabels()[ this.state.selectedAction ].label }
+					header={ actionLabels()[ this.state.selectedAction ].header }
 					selectedTheme={ this.props }
 					onHide={ this.hideSiteSelectorModal }
 					action={ this.props[ this.state.selectedAction ] }

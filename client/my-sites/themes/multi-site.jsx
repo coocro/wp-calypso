@@ -78,7 +78,7 @@ const ThemesMultiSite = React.createClass( {
 				hideForTheme: theme => ! isPremium( theme )
 			},
 		};
-		return merge( {}, buttonOptions, actionLabels );
+		return merge( {}, buttonOptions, actionLabels() );
 	},
 
 	onPreviewButtonClick( theme ) {
@@ -123,8 +123,8 @@ const ThemesMultiSite = React.createClass( {
 					themesList={ this.props.themesList } />
 				{ this.isThemeOrActionSet() && <ThemesSiteSelectorModal
 					name={ this.state.selectedAction /* TODO: Can we get rid of this prop? */ }
-					label={ actionLabels[ this.state.selectedAction ].label }
-					header={ actionLabels[ this.state.selectedAction ].header }
+					label={ actionLabels()[ this.state.selectedAction ].label }
+					header={ actionLabels()[ this.state.selectedAction ].header }
 					selectedTheme={ this.state.selectedTheme }
 					onHide={ this.hideSiteSelectorModal }
 					action={ bindActionCreators( Action[ this.state.selectedAction ], dispatch ) }

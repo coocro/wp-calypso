@@ -50,7 +50,7 @@ const ThemesLoggedOut = React.createClass( {
 				hideForTheme: theme => ! isPremium( theme )
 			},
 		};
-		return merge( {}, buttonOptions, actionLabels );
+		return merge( {}, buttonOptions, actionLabels() );
 	},
 
 	onPreviewButtonClick( theme ) {
