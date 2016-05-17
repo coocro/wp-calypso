@@ -32,6 +32,8 @@ import Spinner from 'components/spinner';
 /**
  * Module variables
  */
+ const STATS_PAGE = '/stats/insights/';
+const authUrl = '/wp-admin/admin.php?page=jetpack&connect_url_redirect=true&calypso_env=' + process.env.NODE_ENV;
 const JETPACK_CONNECT_TTL = 60 * 60 * 1000; // 1 Hour
 
 const LoggedOutForm = React.createClass( {
@@ -176,7 +178,7 @@ const LoggedInForm = React.createClass( {
 	},
 
 	handleSubmit() {
-		const { authUrl, queryObject, manageActivated, activateManageSecret, plansUrl, authorizeError, authorizeSuccess } = this.props.jetpackConnectAuthorize;
+		const { queryObject, manageActivated, activateManageSecret, plansUrl, authorizeError, authorizeSuccess } = this.props.jetpackConnectAuthorize;
 		if ( activateManageSecret && ! manageActivated ) {
 			this.activateManage();
 		} else if ( authorizeError && authorizeError.message.indexOf( 'verify_secrets_missing' ) >= 0 ) {
