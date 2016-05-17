@@ -13,7 +13,8 @@ import classNames from 'classnames';
 import Draggable from 'components/draggable';
 import {
 	getImageEditorCropBounds,
-	getImageEditorAspectRatio
+	getImageEditorAspectRatio,
+	getImageEditorTransform
 } from 'state/ui/editor/media/imageEditor/selectors';
 import { AspectRatios } from 'state/ui/editor/media/imageEditor/constants';
 import { imageEditorCrop } from 'state/ui/editor/media/imageEditor/actions';
@@ -21,6 +22,7 @@ import { imageEditorCrop } from 'state/ui/editor/media/imageEditor/actions';
 const MediaModalImageEditorCrop = React.createClass( {
 
 	propTypes: {
+		degrees: React.PropTypes.number,
 		topBound: React.PropTypes.number,
 		leftBound: React.PropTypes.number,
 		bottomBound: React.PropTypes.number,
@@ -31,6 +33,7 @@ const MediaModalImageEditorCrop = React.createClass( {
 
 	getDefaultProps() {
 		return {
+			degrees: 0,
 			topBound: 0,
 			leftBound: 0,
 			bottomBound: 100,
@@ -55,7 +58,8 @@ const MediaModalImageEditorCrop = React.createClass( {
 	componentWillReceiveProps( newProps ) {
 		if ( ! isEqual( newProps, this.props ) ) {
 			this.updateCrop( this.getDefaultState( newProps ), newProps );
-			this.applyCrop();
+			//FIXME: this causes an infinite loop between setting crop and setting crop bounds
+			//this.applyCrop();
 		}
 	},
 
@@ -69,41 +73,41 @@ const MediaModalImageEditorCrop = React.createClass( {
 			return;
 		}
 
-		const imageWidth = props.rightBound - props.leftBound;
-		const imageHeight = props.bottomBound - props.topBound;
+		const rotated = props.degrees % 180 !== 0;
 		const newState = Object.assign( {}, this.state, newValues );
 		const newWidth = newState.right - newState.left;
 		const newHeight = newState.bottom - newState.top;
 		let ratio,
 			finalWidth = newWidth,
-			finalHeight = newHeight;
+			finalHeight = newHeight,
+			imageWidth, imageHeight;
 
 		switch ( aspectRatio ) {
 			case AspectRatios.ORIGINAL:
-				ratio = Math.min( newWidth / imageWidth, newHeight / imageHeight );
-				finalWidth = imageWidth * ratio;
-				finalHeight = imageHeight * ratio;
+				imageWidth = props.rightBound - props.leftBound;
+				imageHeight = props.bottomBound - props.topBound;
 				break;
 			case AspectRatios.ASPECT_1x1:
-				finalWidth = Math.min( newWidth, newHeight );
-				finalHeight = finalWidth;
+				imageWidth = 1;
+				imageHeight = 1;
 				break;
 			case AspectRatios.ASPECT_16x9:
-				ratio = Math.floor( Math.min( newWidth / 16, newHeight / 9 ) );
-				finalWidth = 16 * ratio;
-				finalHeight = 9 * ratio;
+				imageWidth = rotated ? 9 : 16;
+				imageHeight = rotated ? 16 : 9;
 				break;
 			case AspectRatios.ASPECT_4X3:
-				ratio = Math.floor( Math.min( newWidth / 4, newHeight / 3 ) );
-				finalWidth = 4 * ratio;
-				finalHeight = 3 * ratio;
+				imageWidth = rotated ? 3 : 4;
+				imageHeight = rotated ? 4 : 3;
 				break;
 			case AspectRatios.ASPECT_3X2:
-				ratio = Math.floor( Math.min( newWidth / 3, newHeight / 2 ) );
-				finalWidth = 3 * ratio;
-				finalHeight = 2 * ratio;
+				imageWidth = rotated ? 2 : 3;
+				imageHeight = rotated ? 3 : 2;
 				break;
 		}
+
+		ratio = Math.min( newWidth / imageWidth, newHeight / imageHeight );
+		finalWidth = imageWidth * ratio;
+		finalHeight = imageHeight * ratio;
 
 		if ( newValues.hasOwnProperty( 'top' ) ) {
 			newValues.top = newState.bottom - finalHeight;
@@ -162,12 +166,12 @@ const MediaModalImageEditorCrop = React.createClass( {
 	},
 
 	applyCrop() {
-		const currentTop = this.state.top - this.props.topBound,
-			currentLeft = this.state.left - this.props.leftBound,
-			currentWidth = this.state.right - this.state.left,
-			currentHeight = this.state.bottom - this.state.top,
-			imageWidth = this.props.rightBound - this.props.leftBound,
-			imageHeight = this.props.bottomBound - this.props.topBound;
+		const currentTop = this.state.top - this.props.topBound;
+		const currentLeft = this.state.left - this.props.leftBound;
+		const currentWidth = this.state.right - this.state.left;
+		const currentHeight = this.state.bottom - this.state.top;
+		const imageWidth = this.props.rightBound - this.props.leftBound;
+		const imageHeight = this.props.bottomBound - this.props.topBound;
 
 		this.props.imageEditorCrop(
 			currentTop / imageHeight,
@@ -237,10 +241,11 @@ const MediaModalImageEditorCrop = React.createClass( {
 
 export default connect(
 	( state ) => {
-		const bounds = getImageEditorCropBounds( state ),
-			aspectRatio = getImageEditorAspectRatio( state );
+		const bounds = getImageEditorCropBounds( state );
+		const aspectRatio = getImageEditorAspectRatio( state );
+		const { degrees } = getImageEditorTransform( state );
 
-		return Object.assign( {}, bounds, { aspectRatio } );
+		return Object.assign( {}, bounds, { aspectRatio, degrees } );
 	},
 	{ imageEditorCrop }
 )( MediaModalImageEditorCrop );

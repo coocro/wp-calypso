@@ -83,10 +83,13 @@ const MediaModalImageEditorCanvas = React.createClass( {
 	toBlob( callback ) {
 		const canvas = ReactDom.findDOMNode( this.refs.canvas );
 		const context = canvas.getContext( '2d' );
-		const croppedLeft = this.props.cropLeftRatio * this.image.width;
-		const croppedTop = this.props.cropTopRatio * this.image.height;
-		const croppedWidth = this.props.cropWidthRatio * this.image.width;
-		const croppedHeight = this.props.cropHeightRatio * this.image.height;
+		const rotated = this.props.degrees % 180 !== 0;
+		const imageWidth = rotated ? this.image.height : this.image.width;
+		const imageHeight = rotated ? this.image.width : this.image.height;
+		const croppedLeft = this.props.cropLeftRatio * imageWidth;
+		const croppedTop = this.props.cropTopRatio * imageHeight;
+		const croppedWidth = this.props.cropWidthRatio * imageWidth;
+		const croppedHeight = this.props.cropHeightRatio * imageHeight;
 		const imageData = context.getImageData(
 			croppedLeft,
 			croppedTop,
@@ -108,10 +111,10 @@ const MediaModalImageEditorCanvas = React.createClass( {
 			return;
 		}
 
-		const canvas = ReactDom.findDOMNode( this.refs.canvas ),
-			imageWidth = this.image.width,
-			imageHeight = this.image.height,
-			rotated = this.props.degrees % 180 !== 0;
+		const canvas = ReactDom.findDOMNode( this.refs.canvas );
+		const imageWidth = this.image.width;
+		const imageHeight = this.image.height;
+		const rotated = this.props.degrees % 180 !== 0;
 
 		//make sure the canvas draw area is the same size as the image
 		canvas.width = rotated ? imageHeight : imageWidth;
