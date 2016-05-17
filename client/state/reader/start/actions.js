@@ -34,7 +34,8 @@ export function requestRecommendations() {
 		} );
 
 		return new Promise( ( resolve, reject ) => {
-			wpcom.undocumented().readRecommendationsStart( ( error, data ) => {
+			const query = { meta: 'site,post' };
+			wpcom.undocumented().readRecommendationsStart( query, ( error, data ) => {
 				error ? reject( error ) : resolve( data );
 			} );
 		} )
