@@ -11,6 +11,8 @@ export default React.createClass( {
 	propTypes: {
 		onDrag: React.PropTypes.func,
 		onStop: React.PropTypes.func,
+		width: React.PropTypes.number,
+		height: React.PropTypes.number,
 		x: React.PropTypes.number,
 		y: React.PropTypes.number,
 		controlled: React.PropTypes.bool,
@@ -26,6 +28,8 @@ export default React.createClass( {
 		return {
 			onDrag: noop,
 			onStop: noop,
+			width: 0,
+			height: 0,
 			x: 0,
 			y: 0,
 			controlled: false,
@@ -72,8 +76,8 @@ export default React.createClass( {
 			y = event.pageY - this.state.relativePos.y;
 
 		if ( bounds ) {
-			x = Math.max( bounds.left, Math.min( bounds.right, x ) );
-			y = Math.max( bounds.top, Math.min( bounds.bottom, y ) );
+			x = Math.max( bounds.left, Math.min( bounds.right - this.props.width, x ) );
+			y = Math.max( bounds.top, Math.min( bounds.bottom - this.props.height, y ) );
 		}
 
 		this.props.onDrag( x, y );
@@ -96,12 +100,20 @@ export default React.createClass( {
 	},
 
 	render() {
-		const elementProps = omit( this.props, Object.keys( this.constructor.propTypes ) );
+		const elementProps = omit( this.props, Object.keys( this.constructor.propTypes ) ),
+			style = {
+				transform: 'translate(' + this.state.x + 'px, ' + this.state.y + 'px)'
+			};
+
+		if ( this.props.width || this.props.height ) {
+			style.width = this.props.width + 'px';
+			style.height = this.props.height + 'px';
+		}
 
 		return (
 			<div
 				{ ...elementProps }
-				style={ { transform: 'translate(' + this.state.x + 'px, ' + this.state.y + 'px)' } }
+				style={ style }
 				onMouseDown={ this.onMouseDown }>
 			</div>
 		);

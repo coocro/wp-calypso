@@ -52,10 +52,9 @@
 
 .editor-media-modal-image-editor__crop {
 	position: absolute;
-	width: 100px;
-	height: 100px;
 	z-index: z-index( '.dialog__backdrop', '.editor-media-modal-image-editor__crop' );
 	border: 1px solid $gray;
+	cursor: move;
 }
 
 .editor-media-modal-image-editor__crop-handle {

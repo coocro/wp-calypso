@@ -24,6 +24,10 @@ The x position of the element
 
 The y position of the element
 
+### `width` `height`
+
+Width and height of the element. If either is provided, the element's style attribute will contain width and height. If only one is set, the other will be set to 0. If neither is set, the style attribute will not be affected.
+
 ### `onDrag( x, y )`
 
 A method invoked while the element is dragged around. Receives x and y coordinates
