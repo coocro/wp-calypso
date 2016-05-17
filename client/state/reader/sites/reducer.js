@@ -16,7 +16,7 @@ import { itemsSchema } from './schema';
 import { isValidStateWithSchema } from 'state/utils';
 
 /**
- * Tracks all known list objects, indexed by list ID.
+ * Tracks all known site objects, indexed by site ID.
  *
  * @param  {Object} state  Current state
  * @param  {Object} action Action payload

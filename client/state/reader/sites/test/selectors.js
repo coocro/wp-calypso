@@ -7,13 +7,13 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
-	getSites
+	getSite
 } from '../selectors';
 
 describe( 'selectors', () => {
-	describe( '#getSites()', () => {
-		it( 'should return an empty object if there are no sites', () => {
-			const sites = getSites( {
+	describe( '#getSite()', () => {
+		it( 'should return undefined if there is no match', () => {
+			const site = getSite( {
 				reader: {
 					sites: {
 						items: {}
@@ -21,7 +21,7 @@ describe( 'selectors', () => {
 				}
 			} );
 
-			expect( sites ).to.eql( {} );
+			expect( site ).to.eql( undefined );
 		} );
 	} );
 } );
