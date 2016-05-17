@@ -71,22 +71,24 @@ export default React.createClass( {
 	},
 
 	onMouseMove( event ) {
-		const bounds = this.props.bounds;
-		let x = event.pageX - this.state.relativePos.x,
-			y = event.pageY - this.state.relativePos.y;
+		window.requestAnimationFrame( () => {
+			const bounds = this.props.bounds;
+			let x = event.pageX - this.state.relativePos.x,
+				y = event.pageY - this.state.relativePos.y;
 
-		if ( bounds ) {
-			x = Math.max( bounds.left, Math.min( bounds.right - this.props.width, x ) );
-			y = Math.max( bounds.top, Math.min( bounds.bottom - this.props.height, y ) );
-		}
+			if ( bounds ) {
+				x = Math.max( bounds.left, Math.min( bounds.right - this.props.width, x ) );
+				y = Math.max( bounds.top, Math.min( bounds.bottom - this.props.height, y ) );
+			}
 
-		this.props.onDrag( x, y );
+			this.props.onDrag( x, y );
 
-		if ( this.props.controlled ) {
-			return;
-		}
+			if ( this.props.controlled ) {
+				return;
+			}
 
-		this.setState( { x, y } );
+			this.setState( { x, y } );
+		});
 	},
 
 	onMouseUp() {

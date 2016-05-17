@@ -81,18 +81,18 @@ const MediaModalImageEditorCanvas = React.createClass( {
 	},
 
 	toBlob( callback ) {
-		const canvas = ReactDom.findDOMNode( this.refs.canvas ),
-			context = canvas.getContext( '2d' ),
-			croppedLeft = this.props.cropLeftRatio * this.image.width,
-			croppedTop = this.props.cropTopRatio * this.image.height,
-			croppedWidth = this.props.cropWidthRatio * this.image.width,
-			croppedHeight = this.props.cropHeightRatio * this.image.height,
-			imageData = context.getImageData(
-				croppedLeft,
-				croppedTop,
-				croppedWidth,
-				croppedHeight ),
-			newCanvas = document.createElement( 'canvas' );
+		const canvas = ReactDom.findDOMNode( this.refs.canvas );
+		const context = canvas.getContext( '2d' );
+		const croppedLeft = this.props.cropLeftRatio * this.image.width;
+		const croppedTop = this.props.cropTopRatio * this.image.height;
+		const croppedWidth = this.props.cropWidthRatio * this.image.width;
+		const croppedHeight = this.props.cropHeightRatio * this.image.height;
+		const imageData = context.getImageData(
+			croppedLeft,
+			croppedTop,
+			croppedWidth,
+			croppedHeight );
+		const newCanvas = document.createElement( 'canvas' );
 
 		newCanvas.width = croppedWidth;
 		newCanvas.height = croppedHeight;

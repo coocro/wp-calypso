@@ -5,6 +5,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import isEqual from 'lodash/isEqual';
 import noop from 'lodash/noop';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -176,9 +177,10 @@ const MediaModalImageEditorCrop = React.createClass( {
 	},
 
 	render() {
-		const { top, left, right, bottom } = this.state,
-			width = right - left,
-			height = bottom - top;
+		const { top, left, right, bottom } = this.state;
+		const width = right - left;
+		const height = bottom - top;
+		const handleClassName = 'editor-media-modal-image-editor__crop-handle';
 
 		return (
 			<div>
@@ -200,7 +202,7 @@ const MediaModalImageEditorCrop = React.createClass( {
 					controlled
 					bounds={ { top: this.props.topBound - 1, left: this.props.leftBound - 1, bottom, right } }
 					ref="topLeft"
-					className="editor-media-modal-image-editor__crop-handle editor-media-modal-image-editor__crop-handle-nwse" />
+					className={ classNames( handleClassName, handleClassName + '-nwse' ) }/>
 				<Draggable
 					onDrag={ this.onTopRightDrag }
 					onStop={ this.applyCrop }
@@ -209,7 +211,7 @@ const MediaModalImageEditorCrop = React.createClass( {
 					controlled
 					bounds={ { top: this.props.topBound - 1, right: this.props.rightBound - 1, bottom, left } }
 					ref="topRight"
-					className="editor-media-modal-image-editor__crop-handle editor-media-modal-image-editor__crop-handle-nesw" />
+					className={ classNames( handleClassName, handleClassName + '-nesw' ) } />
 				<Draggable
 					onDrag={ this.onBottomRightDrag }
 					onStop={ this.applyCrop }
@@ -218,7 +220,7 @@ const MediaModalImageEditorCrop = React.createClass( {
 					controlled
 					bounds={ { bottom: this.props.bottomBound - 1, right: this.props.rightBound - 1, top, left } }
 					ref="bottomRight"
-					className="editor-media-modal-image-editor__crop-handle editor-media-modal-image-editor__crop-handle-nwse" />
+					className={ classNames( handleClassName, handleClassName + '-nwse' ) } />
 				<Draggable
 					onDrag={ this.onBottomLeftDrag }
 					onStop={ this.applyCrop }
@@ -227,7 +229,7 @@ const MediaModalImageEditorCrop = React.createClass( {
 					controlled
 					bounds={ { bottom: this.props.bottomBound - 1, left: this.props.leftBound - 1, top, right } }
 					ref="bottomLeft"
-					className="editor-media-modal-image-editor__crop-handle editor-media-modal-image-editor__crop-handle-nesw" />
+					className={ classNames( handleClassName, handleClassName + '-nesw' ) } />
 			</div>
 		);
 	}
