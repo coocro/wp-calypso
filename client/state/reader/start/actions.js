@@ -17,6 +17,7 @@ import {
 	READER_START_RECOMMENDATIONS_REQUEST_FAILURE
 } from 'state/action-types';
 import { receiveSites } from 'state/reader/sites/actions';
+import { receivePosts } from 'state/reader/posts/actions';
 
 /**
  * Returns an action object to signal that recommendation objects have been received.
@@ -54,7 +55,7 @@ export function requestRecommendations() {
 				const sites = map( data.recommendations, property( 'meta.data.site' ) );
 				const posts = map( data.recommendations, property( 'meta.data.post' ) );
 				dispatch( receiveSites( sites ) );
-				//dispatch( receivePosts( blah ) );
+				dispatch( receivePosts( posts ) );
 
 				// Trim meta off before receiving recommendations
 				const recommendations = map( data.recommendations, ( recommendation ) => {
