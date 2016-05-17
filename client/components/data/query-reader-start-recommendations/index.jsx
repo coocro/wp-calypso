@@ -17,7 +17,13 @@ class QueryReaderStartRecommendations extends Component {
 			return;
 		}
 
-		this.props.requestRecommendations( this.props.getRecommendationsInteractedWith );
+		this.props.requestRecommendations( this.props.recommendationsInteractedWith );
+	}
+
+	componentWillReceiveProps( nextProps ) {
+		if ( this.props.recommendationsInteractedWith !== nextProps.recommendationsInteractedWith ) {
+			this.props.requestRecommendations( nextProps.recommendationsInteractedWith );
+		}
 	}
 
 	render() {
@@ -38,7 +44,7 @@ export default connect(
 	( state ) => {
 		return {
 			isRequestingRecommendations: isRequestingRecommendations( state ),
-			getRecommendationsInteractedWith: getRecommendationsInteractedWith( state )
+			recommendationsInteractedWith: getRecommendationsInteractedWith( state )
 		};
 	},
 	( dispatch ) => {
