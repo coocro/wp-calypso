@@ -17,10 +17,11 @@ import {
 	JETPACK_CONNECT_SSO_VALIDATION_ERROR,
 	SERIALIZE,
 } from 'state/action-types';
+
 import reducer, {
-	jetpackConnectSessions,
 	jetpackConnectAuthorize,
-	jetpackSSO
+	jetpackSSO,
+	jetpackSSOSessions
 } from '../reducer';
 
 describe( 'reducer', () => {
@@ -29,11 +30,12 @@ describe( 'reducer', () => {
 			'jetpackConnectSite',
 			'jetpackConnectAuthorize',
 			'jetpackConnectSessions',
-			'jetpackSSO'
+			'jetpackSSO',
+			'jetpackSSOSessions'
 		] );
 	} );
 
-	describe( '#jetpackConnectSessions()', () => {
+	describe( '#jetpackSSOSessions()', () => {
 		it( 'should default to an empty object', () => {
 			const state = jetpackConnectAuthorize( undefined, {} );
 			expect( state ).to.eql( {} );
@@ -41,7 +43,7 @@ describe( 'reducer', () => {
 
 		it( 'should store an integer timestamp when creating new session', () => {
 			const nowTime = ( new Date() ).getTime();
-			const state = jetpackConnectSessions( undefined, {
+			const state = jetpackSSOSessions( undefined, {
 				type: JETPACK_CONNECT_SSO_AUTHORIZE_SUCCESS,
 				ssoUrl: 'https://website.com?action=jetpack-sso&result=success&sso_nonce={$nonce}&user_id={$user_id}'
 			} );
